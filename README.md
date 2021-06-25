@@ -45,7 +45,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
 
 
 <h3 align="center"> <b>  Κώδικας Εφαρμογής </b> </h3> 
-<br> </br>
+
 
     using System;
     using System.IO;
