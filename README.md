@@ -359,7 +359,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
     }
 
 
-<h3 align="center"> <b> Οδηγίες Εκτέλεσης </b> </p> </h3>
+<h3 align="center"> <b> Οδηγίες Εκτέλεσης </b> </h3>
  <p><b>1.</b> Πρίν την εκτέλεση πρέπει να έχουμε εγκατεστημένο το <b>.NetFramework </b> το οποίο έχει μεταγλωτιστή της C#(Sharp) 5 τουλάχιστον,  απο <a href="https://dotnet.microsoft.com/learn/dotnet/what-is-dotnet-framework">εδώ</a>. </p>
  <p><b>2.</b> Ανοίγουμε ένα παράθυρο <b>cmd </b> με δικαιώματα διαχειρηστή και εκτελούμε την εντολή <b> path=%path%;C:\Windows\Microsoft.NET\Framework\v4.0.30319 </b> ή όποια έκδοση-διαδρομή έχουμε </p>
  <p><b> 3.</b> Αποθηκεύουμε με όνομα Program.cs και κάνουμε compile το προγραμμά μας με την εντολή <b> csc "Προγραμμα.cs" </b> εφόσον σιγουρευτούμε ότι είμαστε στο path με το αρχείο του κώδικα. </p>
