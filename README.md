@@ -51,18 +51,18 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
 
-    namespace Solution.Namespace 
+    namespace Solution.Namespace  
     {
-       class Program
+    class Program
     {
         static void Main(string[] args)
         {
             Exec Class = new Exec();
             Class.Init();
         }
-     }
-     
-     
+    }
+
+
     /// <summary>
     /// Exec class.
     /// </summary>
@@ -85,27 +85,26 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 Console.WriteLine(_files[int.Parse(FileNumber) - 1]);
                 FileOpen("datasets/" + _files[int.Parse(FileNumber) - 1]);
                 _lessons.Sort();
-                var lessonsCount = _lessons.Count; 
-                _examStudents = new List<List<int>>(lessonsCount);
-
+                var lessonsCount = _lessons.Count; //Αριθμός μοναδικών μαθημάτων
+                _examStudents = new List<List<int>>(lessonsCount);        
                 for (int i = 0; i < lessonsCount; i++)
                 {
                     _examStudents.Add(new List<int>());
                 }
-                InitializeExamStudents();
             
-
+                  
+                InitializeExamStudents();
                 _conflictsCount = 0;
                 _conflictsUniqueCount = 0;
                 Conflict_Lines_Arg = new List<int>(new int[lessonsCount]);
-                Adjc();
+                CreateM_FindC();
 
             
 
 
                 double density = _conflictsUniqueCount / ((double)(lessonsCount * lessonsCount));
                 Console.WriteLine("Lessons : " + lessonsCount);
-                Console.WriteLine("Students : " + _studentExams.Count);
+                Console.WriteLine("Students : " + _students);
                 Console.WriteLine("Registrations : " + _registrations);
                 Console.WriteLine("All Conficts : " + _conflictsCount);
                 Console.WriteLine("Density : " + density);
@@ -114,14 +113,25 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 Console.WriteLine("Mean : " + FindMean());
                 Console.WriteLine("Med : " + FindMed());
                 Console.WriteLine("CV : " + FindCV());
-                Console.WriteLine("Unique Colors Used : " + FirstFit()); 
-            
+                Console.WriteLine("Unique Colors Used : " + FirstFit());
+               // int z=0;
+               /* foreach (var item in _studentExams)
+                {
+                    foreach (var x in item)
+                    {
+                    Console.WriteLine(x);
+                    Console.WriteLine(z);
+                    z++;
+                    }
+                   
+                }*/
+
         }
 
         private int FindMax()
         {
             var lessonsCount = _lessons.Count;
-            int matrixMax = 0;
+            int maxCol = 0;
             for (int i = 0; i < lessonsCount; i++)
             {
                 int tempMax = 0;
@@ -130,15 +140,15 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                     if (_lessonMatrix[i, j] > 0)
                         tempMax++;
                 }
-                matrixMax = Math.Max(tempMax, matrixMax); 
+                maxCol = Math.Max(tempMax, maxCol); 
             }
-            return matrixMax;
+            return maxCol;
         }
 
         private int FindMin()
         {
             var lessonsCount = _lessons.Count;
-            int matrixMin = FindMax();
+            int minCol = lessonsCount+1;
             for (int i = 0; i < lessonsCount; i++)
             {
                 int tempMin = 0;
@@ -147,9 +157,9 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                     if (_lessonMatrix[i, j] > 0)
                         tempMin++;
                 }
-                matrixMin = Math.Min(tempMin, matrixMin); 
+                minCol = Math.Min(tempMin, minCol); 
             }
-            return matrixMin;
+            return minCol;
         }
 
 
@@ -195,7 +205,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
 
         }
 
-        private void Adjc()
+        private void CreateM_FindC()
         {
             var lessonsCount = _lessons.Count;
             _lessonMatrix = new int[lessonsCount, lessonsCount];
@@ -205,20 +215,20 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 {
                     if (i == j)
                     {
-                        _lessonMatrix[i, j] = 0;
+                        _lessonMatrix[i, j] = 0;   //μηδενιζει τη διαγωνιο για να μην εξεταζει τον εαυτο του 
                         continue;
                     }
                     _lessonMatrix[i, j] = FindColisions(_examStudents[i], _examStudents[j]);
-
                     if (_lessonMatrix[i, j] > 0)
                     {
+                        
                         Conflict_Lines_Arg[i] += _lessonMatrix[i, j];
                         _conflictsCount += _lessonMatrix[i, j];
                         _conflictsUniqueCount++;
+                    
                     }
                 }
             }
-
         }
 
         private static int FindColisions(List<int> ls1, List<int> ls2) 
@@ -252,31 +262,35 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
             {
                 _students++;
                 string[] frag = line.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries);
-               
                 List<int> temp = new List<int>();
                 for (int i = 0; i < frag.Length; i++)
                 {
-                    temp.Add(int.Parse(frag[i])); 
-                    StoreUnique(frag[i]);    
+                    temp.Add(int.Parse(frag[i])); //Αποθηκεύει τα μαθήματα στη προσωρινή λιστα temp σε ακαίρεα μορφή (πχ. 320,789 ,101)
+                    StoreUnique(frag[i]);    // Αποθηκεύει τα μοναδικά μαθήματα  στην Λίστα _lessons (πχ. 0320 , 0789, 0101)
                 }
                 _studentExams.Add(temp);
-               
                 line = sr.ReadLine();
                 
             }
+                  
             return true;
         }
 
         private void InitializeExamStudents()
         {
-            for (int i = 0; i < _studentExams.Count; i++)
+            
+            for (int student = 0; student < _studentExams.Count; student++)
             {
-                for (int j = 0; j < _studentExams[i].Count; j++)
+                for (int j = 0; j < _studentExams[student].Count; j++)
                 {
+                    
                     _registrations++;
-                    _examStudents[_studentExams[i][j] - 1].Add(i);
+                    _examStudents[_studentExams[student][j] - 1].Add(student);  
+
                 }
+                
             }
+
         }
 
         private void StoreUnique(string lessonId)
@@ -353,9 +367,10 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
        
         private readonly List<int> _lessons = new List<int>();
         private readonly List<List<int>> _studentExams = new List<List<int>>();
-        private readonly string[] _files = new string[13] { "car-f-92.stu", "car-s-91.stu", "ear-f-83.stu", "hec-s-92.stu", "kfu-s-93.stu", "lse-f-91.stu", "pur-s-93.stu", "rye-s-93.stu", "sta-f-83.stu", "tre-s-92.stu", "uta-s-92.stu", "ute-s-92.stu", "yor-f-83.stu" };
+        private readonly string[] _files = new string[13] {"car-f-92.stu", "car-s-91.stu", "ear-f-83.stu", "hec-s-92.stu", "kfu-s-93.stu", "lse-f-91.stu", "pur-s-93.stu", "rye-s-93.stu", "sta-f-83.stu", "tre-s-92.stu", "uta-s-92.stu", "ute-s-92.stu", "yor-f-83.stu" };
     }
     }
+
 
 
 <h3 align="center"> <b> Οδηγίες Εκτέλεσης </b> </h3>
