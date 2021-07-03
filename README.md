@@ -53,14 +53,14 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
 
     namespace Solution.Namespace  
     {
-      class Program
+    class Program
     {
-         static void Main(string[] args)
+        static void Main(string[] args)
         {
             Exec Class = new Exec();
             Class.Init();
         }
-     }
+    }
 
 
     /// <summary>
@@ -93,7 +93,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 }
             
                   
-                InitializeExamStudents();
+                AddExamStudents();
                 _conflictsCount = 0;
                 _conflictsUniqueCount = 0;
                 Conflict_Lines_Arg = new List<int>(new int[lessonsCount]);
@@ -113,7 +113,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 Console.WriteLine("Mean : " + FindMean());
                 Console.WriteLine("Med : " + FindMed());
                 Console.WriteLine("CV : " + FindCV());
-                Console.WriteLine("Unique Colors Used : " + FirstFit())
+                Console.WriteLine("Unique Colors Used : " + FirstFit());
 
         }
 
@@ -194,6 +194,8 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
 
         }
 
+        /*Δημιουργεί έναν δυσδιαστατο πινακα με το μηκος των μαθηματων όπου πχ.
+        _lessonMatrix[0,5] περιέχει τα colisions του μαθήματος 0 με το μάθημα 5 */ 
         private void CreateM_FindC()
         {
             var lessonsCount = _lessons.Count;
@@ -204,7 +206,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 {
                     if (i == j)
                     {
-                        _lessonMatrix[i, j] = 0;  
+                        _lessonMatrix[i, j] = 0;   
                         continue;
                     }
                     _lessonMatrix[i, j] = FindColisions(_examStudents[i], _examStudents[j]);
@@ -219,7 +221,8 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 }
             }
         }
-
+        /* Συγκρίνει με τη σειρά όλους τους μαθητές της πρώτης λιστας με όλους της δεύτερης λιστας ,
+         εαν ο μαθητής υπάρχει και στις 2 λίστες τότε έχουμε 1 collision */
         private static int FindColisions(List<int> ls1, List<int> ls2) 
         {
             int col = 0;
@@ -237,6 +240,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
             return col;
         }
 
+        /*Function που διαβάζει τις γραμμές του αρχείου*/
         private bool FileOpen(string path)
         {
             if (!File.Exists(path)) 
@@ -255,7 +259,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                 for (int i = 0; i < frag.Length; i++)
                 {
                     temp.Add(int.Parse(frag[i])); 
-                    StoreUnique(frag[i]);   
+                    UniqueLessons(frag[i]);    
                 }
                 _studentExams.Add(temp);
                 line = sr.ReadLine();
@@ -264,8 +268,9 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                   
             return true;
         }
-
-        private void InitializeExamStudents()
+        
+        /*Προσθέτει τους μαθητές στο μάθημα που έχουν δηλώσει*/
+        private void AddExamStudents()
         {
             
             for (int student = 0; student < _studentExams.Count; student++)
@@ -282,14 +287,16 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
 
         }
 
-        private void StoreUnique(string lessonId)
+        /*Προσθέτει τα μαθήματα με μοναδικό ID στη λίστα _lessons*/
+        private void UniqueLessons(string lessonId)
         {
             if (_lessons.Contains(int.Parse(lessonId)))
                 return;
             _lessons.Add(int.Parse(lessonId));
         }
-
-        private bool IsVertexConnected(int lesson1, int lesson2)
+        
+        /*Βρίσκει αν υπάρχει κοινός φοιτητής ανάμεσα σε 2 μαθήματα , δηλαδή έχουμε σύνδεση κορυφών */
+        private bool HasConnection(int lesson1, int lesson2)
         {
             for (int i = 0; i < _examStudents[lesson1].Count; i++)
             {
@@ -302,16 +309,12 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
             return false;
         }
 
+        /*Greedy αλγόριθμος χρωματισμού κορυφών γραφήματος*/
         private int FirstFit()
         {
             var lessonsCount = _lessons.Count;
             int max_colors = 0;
             int[] Lesson_Color = new int[lessonsCount];
-
-            for (int i = 0; i < lessonsCount; i++)
-            {
-                Lesson_Color[i] = 0;
-            }
 
             for (int i = 0; i < lessonsCount; i++)
             {
@@ -322,7 +325,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                     colorFound = true;
                     for (int j = 0; j < lessonsCount; j++)
                     {
-                        if (i != j && IsVertexConnected(i, j))
+                        if (i != j && HasConnection(i, j))
                         {
                             if (curColor == Lesson_Color[j])
                             {
@@ -338,8 +341,7 @@ Backtracking DSATUR : Είναι παρόμοιος με τον DSATUR απλώ�
                     max_colors = curColor;
                 Lesson_Color[i] = curColor;
 
-            }
-
+            }  
             return max_colors;
 
         }
